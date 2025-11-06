@@ -1,16 +1,23 @@
-# PinkNotes Frontend
+# PinkNotes 🩷
 
-## Setup
+A web app for college students to upload, browse, and manage study resources.
+Built with React, TailwindCSS, and Firebase.
 
-1. Install:
-   ```bash
-   cd frontend
-   npm install
-   ```
+## ✨ Features
+- Upload & browse notes
+- AI-powered doubt solver
+- Quiz module
+- Feedback system
+- Dark mode interface
 
-2. Start:
-   ```bash
-   npm start
-   ```
+## ⚙️ Tech Stack
+- **Frontend:** React + TailwindCSS
+- **Backend:** Node.js + Express (if any)
+- **Database:** Firebase / MongoDB
 
-The frontend is configured to proxy API calls to http://localhost:5000
+## 🚀 Setup
+```bash
+npm install
+npm run dev
+
+
