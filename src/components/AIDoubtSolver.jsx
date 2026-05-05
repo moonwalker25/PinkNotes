@@ -1,41 +1,35 @@
 import React, { useState } from 'react';
 import { Brain } from 'lucide-react';
-import axios from 'axios';
+
 
 const AIDoubtSolver = () => {
   const [question, setQuestion] = useState('');
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const handleAsk = async (e) => {
-    e.preventDefault();
-    if (!question.trim()) return;
+ const handleAsk = async (e) => {
+  e.preventDefault();
+  if (!question.trim()) return;
 
-    const userMessage = { type: 'user', text: question };
-    setMessages([...messages, userMessage]);
-    setQuestion('');
-    setLoading(true);
+  const userMessage = { type: 'user', text: question };
+  setMessages(prev => [...prev, userMessage]);
+  setQuestion('');
+  setLoading(true);
 
-    try {
-      const response = await axios.post('http://localhost:5001/api/ai/ask', {
-        question: userMessage.text
-      });
+  setTimeout(() => {
+    const responses = [
+      "AI stands for Artificial Intelligence.",
+      "This is widely used in modern applications.",
+      "Think of it as machines learning from data.",
+      "Great question! Focus on real-world applications."
+    ];
 
-      setMessages(prev => [...prev, {
-        type: 'ai',
-        text: response.data.answer
-      }]);
-    } catch (error) {
-      console.error('AI error:', error);
-      setMessages(prev => [...prev, {
-        type: 'ai',
-        text: 'Sorry, I encountered an error. Please try again.'
-      }]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const reply = responses[Math.floor(Math.random() * responses.length)];
 
+    setMessages(prev => [...prev, { type: 'ai', text: reply }]);
+    setLoading(false);
+  }, 1000);
+};
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6">
       <div className="flex items-center gap-3 mb-6">
