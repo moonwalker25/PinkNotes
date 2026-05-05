@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Upload } from 'lucide-react';
-import axios from 'axios';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
+import { db, storage } from "../firebase";
 
 const UploadNotes = ({ onUploadSuccess }) => {
   const [file, setFile] = useState(null);
@@ -8,34 +10,39 @@ const UploadNotes = ({ onUploadSuccess }) => {
   const [subject, setSubject] = useState('');
   const [uploading, setUploading] = useState(false);
 
-  const handleUpload = async (e) => {
-    e.preventDefault();
-    if (!file || !title) return;
-    
-    setUploading(true);
-    
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('title', title);
-      formData.append('subject', subject);
+const handleUpload = async (e) => {
+  e.preventDefault();
+  if (!file || !title) return;
 
-      await axios.post('http://localhost:5001/api/notes/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+  setUploading(true);
 
-      alert('Notes uploaded successfully!');
-      setFile(null);
-      setTitle('');
-      setSubject('');
-      onUploadSuccess();
-    } catch (error) {
-      console.error('Upload error:', error);
-      alert('Failed to upload notes');
-    } finally {
-      setUploading(false);
-    }
-  };
+  try {
+    const storageRef = ref(storage, `notes/${Date.now()}_${file.name}`);
+    await uploadBytes(storageRef, file);
+
+    const fileURL = await getDownloadURL(storageRef);
+
+    await addDoc(collection(db, "notes"), {
+      title,
+      subject,
+      fileURL,
+      createdAt: new Date()
+    });
+
+    alert("Uploaded successfully!");
+
+    setFile(null);
+    setTitle("");
+    setSubject("");
+
+    onUploadSuccess();
+  } catch (err) {
+    console.error(err);
+    alert("Upload failed");
+  } finally {
+    setUploading(false);
+  }
+};
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6">
