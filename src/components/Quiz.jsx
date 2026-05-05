@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Award } from 'lucide-react';
-import axios from 'axios';
 
 const Quiz = () => {
   const [selectedSubject, setSelectedSubject] = useState('');
@@ -10,22 +9,30 @@ const Quiz = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const startQuiz = async () => {
+   const startQuiz = async () => {
     if (!selectedSubject) return;
-    
+  
     setLoading(true);
-    try {
-      const response = await axios.get(`http://localhost:5001/api/quiz/${selectedSubject}`);
-      setQuestions(response.data.questions);
+  
+    setTimeout(() => {
+      const quizzes = {
+        mathematics: [
+          { question: "2 + 2 = ?", options: ["2", "3", "4", "5"], correct: 2 },
+          { question: "Square root of 16?", options: ["2", "4", "8", "16"], correct: 1 }
+        ],
+        physics: [
+          { question: "Unit of force?", options: ["Joule", "Newton", "Watt", "Pascal"], correct: 1 }
+        ],
+        chemistry: [
+          { question: "Water formula?", options: ["CO2", "H2O", "O2", "NaCl"], correct: 1 }
+        ]
+      };
+  
+      setQuestions(quizzes[selectedSubject]);
       setQuizStarted(true);
-    } catch (error) {
-      console.error('Quiz error:', error);
-      alert('Failed to load quiz');
-    } finally {
       setLoading(false);
-    }
+    }, 1000);
   };
-
   const handleAnswer = (index) => {
     if (index === questions[currentQuestion].correct) {
       setScore(score + 1);
