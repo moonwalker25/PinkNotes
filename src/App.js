@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Upload, BookOpen, MessageSquare, Brain, Award, Menu, X, Sun, Moon, Bell, User, TrendingUp } from 'lucide-react';
-import axios from 'axios';
 import UploadNotes from './components/UploadNotes.jsx';
 import BrowseNotes from './components/BrowseNotes.jsx';
 import AIDoubtSolver from './components/AIDoubtSolver.jsx';
@@ -8,6 +7,8 @@ import Quiz from './components/Quiz.jsx';
 import Feedback from './components/Feedback.jsx';
 import RecentActivity from './components/RecentActivity.jsx';
 import StatsCard from './components/StatsCard.jsx';
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "./firebase";
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -18,21 +19,20 @@ function App() {
 
   // Fetch notes from backend
   const fetchNotes = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get('http://localhost:5001/api/notes');
-      if (response.data.success) {
-        setNotes(response.data.notes);
-      }
-    } catch (error) {
-      console.error('Error fetching notes:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNotes();
+  setLoading(true);
+  try {
+    const querySnapshot = await getDocs(collection(db, "notes"));
+    const notesData = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    setNotes(notesData);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
     
     // Check for saved dark mode preference
     const savedTheme = localStorage.getItem('theme');
