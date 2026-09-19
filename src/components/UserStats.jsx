@@ -22,9 +22,7 @@ import EmptyState from "./common/EmptyState";
 import ErrorState from "./common/ErrorState";
 
 
-function UserStats({
-  onPracticeTopic,
-}) {
+function UserStats({ onPracticeTopic }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -39,20 +37,13 @@ function UserStats({
       setLoading(true);
       setError("");
 
-      const response =
-        await API.get("/api/quiz/stats");
+      const response = await API.get("/api/quiz/stats");
 
-      const data =
-        response.data?.stats || null;
+      const data = response.data?.stats || null;
 
       setStats(data);
-
     } catch (error) {
-
-      console.error(
-        "Stats error:",
-        error
-      );
+      console.error("Stats error:", error);
 
       setStats(null);
 
@@ -60,11 +51,8 @@ function UserStats({
         error.response?.data?.detail ||
           "We couldn't load your learning analytics right now."
       );
-
     } finally {
-
       setLoading(false);
-
     }
   };
 
@@ -79,17 +67,11 @@ function UserStats({
   // ==========================================
 
   if (loading) {
-
     return (
       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl">
-
-        <LoadingState
-          message="Loading your learning analytics..."
-        />
-
+        <LoadingState message="Loading your learning analytics..." />
       </div>
     );
-
   }
 
 
@@ -98,19 +80,15 @@ function UserStats({
   // ==========================================
 
   if (error) {
-
     return (
       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl">
-
         <ErrorState
           title="Couldn't load your analytics"
           description={error}
           onRetry={loadStats}
         />
-
       </div>
     );
-
   }
 
 
@@ -119,19 +97,15 @@ function UserStats({
   // ==========================================
 
   if (!stats) {
-
     return (
       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl">
-
         <EmptyState
           icon={BarChart3}
           title="Your analytics are waiting"
           description="Complete your first quiz to start building your learning analytics and performance insights."
         />
-
       </div>
     );
-
   }
 
 
@@ -140,69 +114,48 @@ function UserStats({
   // ==========================================
 
   const statCards = [
-
     {
       label: "Quizzes Generated",
       value: stats.total_quizzes ?? 0,
       description: "AI quizzes created",
       icon: Brain,
-      gradient:
-        "from-pink-500 to-rose-500",
+      gradient: "from-pink-500 to-rose-500",
     },
-
     {
       label: "Completed",
       value: stats.completed_quizzes ?? 0,
       description: "Quizzes finished",
       icon: CheckCircle2,
-      gradient:
-        "from-purple-500 to-indigo-500",
+      gradient: "from-purple-500 to-indigo-500",
     },
-
     {
       label: "Average Score",
-      value:
-        `${stats.average_score ?? 0}%`,
-      description:
-        "Average across quizzes",
+      value: `${stats.average_score ?? 0}%`,
+      description: "Average across quizzes",
       icon: TrendingUp,
-      gradient:
-        "from-violet-500 to-fuchsia-500",
+      gradient: "from-violet-500 to-fuchsia-500",
     },
-
     {
       label: "Best Score",
-      value:
-        `${stats.best_score ?? 0}%`,
-      description:
-        "Your highest performance",
+      value: `${stats.best_score ?? 0}%`,
+      description: "Your highest performance",
       icon: Trophy,
-      gradient:
-        "from-amber-400 to-orange-500",
+      gradient: "from-amber-400 to-orange-500",
     },
-
     {
       label: "Accuracy",
-      value:
-        `${stats.accuracy ?? 0}%`,
-      description:
-        `${stats.total_correct ?? 0} correct answers`,
+      value: `${stats.accuracy ?? 0}%`,
+      description: `${stats.total_correct ?? 0} correct answers`,
       icon: Target,
-      gradient:
-        "from-emerald-500 to-teal-500",
+      gradient: "from-emerald-500 to-teal-500",
     },
-
     {
       label: "Questions Answered",
-      value:
-        stats.total_questions ?? 0,
-      description:
-        "Across completed quizzes",
+      value: stats.total_questions ?? 0,
+      description: "Across completed quizzes",
       icon: FileQuestion,
-      gradient:
-        "from-blue-500 to-cyan-500",
+      gradient: "from-blue-500 to-cyan-500",
     },
-
   ];
 
 
@@ -210,54 +163,36 @@ function UserStats({
   // PERFORMANCE DATA
   // ==========================================
 
-  const scoreHistory =
-    stats.score_history || [];
-
-  const subjectPerformance =
-    stats.subject_performance || [];
+  const scoreHistory = stats.score_history || [];
+  const subjectPerformance = stats.subject_performance || [];
 
 
   // ==========================================
   // LEARNING INSIGHTS
   // ==========================================
 
-  const strongestArea =
-    stats.strongest_area;
+  const strongestArea = stats.strongest_area;
+  const focusArea = stats.focus_area;
 
-  const focusArea =
-    stats.focus_area;
+  const learningInsights = stats.learning_insights || {};
 
-  const learningInsights =
-    stats.learning_insights || {};
-
-  const focusAreas =
-    learningInsights.focus_areas || [];
-
-  const strongAreas =
-    learningInsights.strong_areas || [];
+  const focusAreas = learningInsights.focus_areas || [];
+  const strongAreas = learningInsights.strong_areas || [];
 
   const recommendedTopic =
-    learningInsights.recommended_topic;
+    learningInsights.recommended_topic || null;
 
 
   // ==========================================
   // STREAK
   // ==========================================
 
-  const streak =
-    stats.streak || {};
+  const streak = stats.streak || {};
 
-  const currentStreak =
-    streak.current ?? 0;
-
-  const longestStreak =
-    streak.longest ?? 0;
-
-  const activeDaysLast7 =
-    streak.active_days_last_7 ?? 0;
-
-  const lastActivity =
-    streak.last_activity;
+  const currentStreak = streak.current ?? 0;
+  const longestStreak = streak.longest ?? 0;
+  const activeDaysLast7 = streak.active_days_last_7 ?? 0;
+  const lastActivity = streak.last_activity;
 
   const streakMessage =
     streak.message ||
@@ -273,11 +208,25 @@ function UserStats({
 
 
   // ==========================================
+  // PRACTICE HANDLER
+  // ==========================================
+
+  const handlePractice = () => {
+    if (!recommendedTopic?.name) {
+      return;
+    }
+
+    if (onPracticeTopic) {
+      onPracticeTopic(recommendedTopic);
+    }
+  };
+
+
+  // ==========================================
   // MAIN UI
   // ==========================================
 
   return (
-
     <div className="space-y-7">
 
 
@@ -286,20 +235,16 @@ function UserStats({
       ================================================= */}
 
       <div>
-
         <div className="flex items-center gap-2">
 
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
-
             <BarChart3
               size={20}
               className="text-white"
             />
-
           </div>
 
           <div>
-
             <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800 dark:text-white">
               Your Learning Analytics
             </h2>
@@ -307,11 +252,9 @@ function UserStats({
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
               See how your quiz performance is evolving.
             </p>
-
           </div>
 
         </div>
-
       </div>
 
 
@@ -322,11 +265,9 @@ function UserStats({
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
 
         {statCards.map((stat) => {
-
           const Icon = stat.icon;
 
           return (
-
             <div
               key={stat.label}
               className="relative overflow-hidden bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-xl hover:shadow-pink-100/30 dark:hover:shadow-none transition-all duration-200"
@@ -335,12 +276,10 @@ function UserStats({
               <div
                 className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}
               >
-
                 <Icon
                   size={20}
                   className="text-white"
                 />
-
               </div>
 
               <p className="text-2xl font-extrabold text-slate-800 dark:text-white mt-4">
@@ -356,9 +295,7 @@ function UserStats({
               </p>
 
             </div>
-
           );
-
         })}
 
       </div>
@@ -372,20 +309,16 @@ function UserStats({
 
         <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 
-
           {/* LEFT */}
 
           <div className="flex items-start gap-4">
 
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center shrink-0 shadow-sm">
-
               <Flame
                 size={23}
                 className="text-white"
               />
-
             </div>
-
 
             <div>
 
@@ -396,7 +329,6 @@ function UserStats({
                 </h3>
 
                 {currentStreak > 0 && (
-
                   <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 dark:bg-orange-500/15 px-2 py-0.5 text-[10px] font-bold text-orange-600 dark:text-orange-400">
 
                     <Flame size={11} />
@@ -404,11 +336,9 @@ function UserStats({
                     Active
 
                   </span>
-
                 )}
 
               </div>
-
 
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                 {streakMessage}
@@ -423,9 +353,6 @@ function UserStats({
 
           <div className="grid grid-cols-3 gap-3 lg:min-w-[360px]">
 
-
-            {/* CURRENT */}
-
             <div className="rounded-2xl bg-white/80 dark:bg-slate-900/50 border border-white dark:border-slate-700 p-3 text-center">
 
               <p className="text-2xl font-extrabold text-orange-500">
@@ -439,8 +366,6 @@ function UserStats({
             </div>
 
 
-            {/* LAST 7 DAYS */}
-
             <div className="rounded-2xl bg-white/80 dark:bg-slate-900/50 border border-white dark:border-slate-700 p-3 text-center">
 
               <p className="text-2xl font-extrabold text-pink-500">
@@ -453,8 +378,6 @@ function UserStats({
 
             </div>
 
-
-            {/* LONGEST */}
 
             <div className="rounded-2xl bg-white/80 dark:bg-slate-900/50 border border-white dark:border-slate-700 p-3 text-center">
 
@@ -496,15 +419,10 @@ function UserStats({
 
             </p>
 
-
             {currentStreak === 0 && (
-
               <p className="text-xs font-semibold text-orange-500">
-
                 Complete a quiz today to start your streak.
-
               </p>
-
             )}
 
           </div>
@@ -559,7 +477,6 @@ function UserStats({
       {hasCompletedQuizzes && (
 
         <div className="space-y-4">
-
 
           {/* HEADER */}
 
@@ -644,9 +561,7 @@ function UserStats({
 
                     return (
 
-                      <div
-                        key={item.topic}
-                      >
+                      <div key={item.topic}>
 
                         <div className="flex items-center justify-between mb-2">
 
@@ -674,14 +589,13 @@ function UserStats({
                           <div
                             className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all duration-700"
                             style={{
-                              width:
-                                `${Math.min(
-                                  100,
-                                  Math.max(
-                                    0,
-                                    percentage
-                                  )
-                                )}%`,
+                              width: `${Math.min(
+                                100,
+                                Math.max(
+                                  0,
+                                  percentage
+                                )
+                              )}%`,
                             }}
                           />
 
@@ -730,121 +644,99 @@ function UserStats({
                   </span>
 
                   <h4 className="text-lg font-extrabold text-slate-800 dark:text-white mt-2">
+
                     {recommendedTopic
                       ? `Strengthen ${recommendedTopic.name}`
                       : "Keep building your skills"}
+
                   </h4>
 
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 leading-6">
+
                     {recommendedTopic
                       ? recommendedTopic.reason
                       : "Complete more topic-based quizzes and PinkNotes will personalize your practice recommendations."}
+
                   </p>
 
                 </div>
 
+
                 <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-pink-100 dark:border-pink-500/20 flex items-center justify-center shrink-0 shadow-sm">
+
                   <Target
                     size={18}
                     className="text-pink-500"
                   />
+
                 </div>
 
               </div>
 
-              {recommendedTopic && (
-                <div className="mt-5 flex items-center justify-between gap-3">
-
-                  <div className="text-xs text-slate-400 dark:text-slate-500">
-                    {recommendedTopic.percentage != null
-                      ? `${recommendedTopic.percentage}% performance`
-                      : "Personalized practice"}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => onPracticeTopic(recommendedTopic)}
-                    className="inline-flex items-center justify-center rounded-xl bg-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-pink-600 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-pink-300 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-                  >
-                    Practice
-                  </button>
-
-                </div>
-              )}
-
-            </div>
-
 
               {recommendedTopic && (
 
-                <div className="mt-5 rounded-2xl border border-white/80 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 p-4">
+                <>
+
+                  {/* RECOMMENDATION STATS */}
+
+                  <div className="mt-5 rounded-2xl border border-white/80 dark:border-slate-700 bg-white/70 dark:bg-slate-900/50 p-4">
+
+                    <div className="flex items-center justify-between">
+
+                      <div>
+
+                        <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
+                          Current accuracy
+                        </p>
+
+                        <p className="text-2xl font-extrabold text-slate-800 dark:text-white mt-1">
+                          {recommendedTopic.percentage ?? 0}%
+                        </p>
+
+                      </div>
 
 
-                  <div className="flex items-center justify-between">
+                      <div className="text-right">
 
-                    <div>
+                        <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
+                          Practice history
+                        </p>
 
-                      <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
-                        Current accuracy
-                      </p>
+                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200 mt-1">
 
-                      <p className="text-2xl font-extrabold text-slate-800 dark:text-white mt-1">
-                        {recommendedTopic.percentage ?? 0}%
-                      </p>
+                          {recommendedTopic.quizzes ?? 0}{" "}
+                          {recommendedTopic.quizzes === 1
+                            ? "quiz"
+                            : "quizzes"}
+
+                        </p>
+
+                      </div>
 
                     </div>
 
 
-                    <div className="text-right">
+                    {/* PRACTICE BUTTON */}
 
-                      <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
-                        Practice history
-                      </p>
+                    <button
+                      type="button"
+                      onClick={handlePractice}
+                      disabled={!onPracticeTopic}
+                      className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 dark:bg-white px-4 py-3 text-sm font-semibold text-white dark:text-slate-900 transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+                    >
 
-                      <p className="text-sm font-bold text-slate-700 dark:text-slate-200 mt-1">
+                      Practice {recommendedTopic.name}
 
-                        {recommendedTopic.quizzes ?? 0}{" "}
-                        {recommendedTopic.quizzes === 1
-                          ? "quiz"
-                          : "quizzes"}
+                      <ArrowRight
+                        size={16}
+                      />
 
-                      </p>
-
-                    </div>
+                    </button>
 
                   </div>
 
-
-                  <button
-                    type="button"
-                    onClick={() => {
-
-                      if (
-                        onPracticeTopic &&
-                        recommendedTopic?.name
-                      ) {
-
-                        onPracticeTopic(
-                          recommendedTopic
-                        );
-
-                      }
-
-                    }}
-                    disabled={!onPracticeTopic}
-                    className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 dark:bg-white px-4 py-3 text-sm font-semibold text-white dark:text-slate-900 transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-default disabled:opacity-70"
-                  >
-
-                    Practice{" "}
-                    {recommendedTopic.name}
-
-                    <ArrowRight
-                      size={16}
-                    />
-
-                  </button>
-
-                </div>
+                </>
 
               )}
 
@@ -906,55 +798,50 @@ function UserStats({
 
               {scoreHistory
                 .slice(-6)
-                .map((item, index) => {
+                .map((item, index) => (
 
-                  return (
+                  <div
+                    key={
+                      item.id ||
+                      index
+                    }
+                  >
 
-                    <div
-                      key={
-                        item.id ||
-                        index
-                      }
-                    >
+                    <div className="flex items-center justify-between mb-1.5">
 
-                      <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate max-w-[70%]">
+                        {item.topic ||
+                          item.subject ||
+                          "Quiz"}
+                      </span>
 
-                        <span className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate max-w-[70%]">
-                          {item.topic ||
-                            item.subject ||
-                            "Quiz"}
-                        </span>
-
-                        <span className="text-xs font-bold text-slate-700 dark:text-slate-200">
-                          {item.percentage ?? 0}%
-                        </span>
-
-                      </div>
-
-
-                      <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-pink-500 to-purple-600 transition-all duration-700"
-                          style={{
-                            width:
-                              `${Math.min(
-                                100,
-                                Math.max(
-                                  0,
-                                  item.percentage || 0
-                                )
-                              )}%`,
-                          }}
-                        />
-
-                      </div>
+                      <span className="text-xs font-bold text-slate-700 dark:text-slate-200">
+                        {item.percentage ?? 0}%
+                      </span>
 
                     </div>
 
-                  );
 
-                })}
+                    <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-pink-500 to-purple-600 transition-all duration-700"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            Math.max(
+                              0,
+                              item.percentage || 0
+                            )
+                          )}%`,
+                        }}
+                      />
+
+                    </div>
+
+                  </div>
+
+                ))}
 
             </div>
 
@@ -1013,9 +900,7 @@ function UserStats({
 
                   return (
 
-                    <div
-                      key={item.subject}
-                    >
+                    <div key={item.subject}>
 
                       <div className="flex items-center justify-between mb-2">
 
@@ -1043,14 +928,13 @@ function UserStats({
                         <div
                           className="h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-700"
                           style={{
-                            width:
-                              `${Math.min(
-                                100,
-                                Math.max(
-                                  0,
-                                  percentage
-                                )
-                              )}%`,
+                            width: `${Math.min(
+                              100,
+                              Math.max(
+                                0,
+                                percentage
+                              )
+                            )}%`,
                           }}
                         />
 
@@ -1147,10 +1031,7 @@ function UserStats({
                       You're averaging{" "}
 
                       <strong>
-                        {
-                          strongestArea.percentage ??
-                          0
-                        }%
+                        {strongestArea.percentage ?? 0}%
                       </strong>{" "}
 
                       here.
@@ -1202,10 +1083,7 @@ function UserStats({
                       Current average:{" "}
 
                       <strong>
-                        {
-                          focusArea.percentage ??
-                          0
-                        }%
+                        {focusArea.percentage ?? 0}%
                       </strong>
 
                       . More practice could help strengthen this area.
@@ -1227,9 +1105,7 @@ function UserStats({
       )}
 
     </div>
-
   );
-
 }
 
 
