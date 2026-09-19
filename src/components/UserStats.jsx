@@ -179,8 +179,19 @@ function UserStats({ onPracticeTopic }) {
   const focusAreas = learningInsights.focus_areas || [];
   const strongAreas = learningInsights.strong_areas || [];
 
-  const recommendedTopic =
-    learningInsights.recommended_topic || null;
+  const rawRecommendedTopic =
+      learningInsights.recommended_topic || null;
+
+  const recommendedTopic = rawRecommendedTopic
+      ? {
+          ...rawRecommendedTopic,
+          name:
+            rawRecommendedTopic.name ||
+            rawRecommendedTopic.topic ||
+            rawRecommendedTopic.subject ||
+            "",
+        }
+      : null;
 
 
   // ==========================================
@@ -212,13 +223,11 @@ function UserStats({ onPracticeTopic }) {
   // ==========================================
 
   const handlePractice = () => {
-    if (!recommendedTopic?.name) {
+    if (!recommendedTopic?.name || !onPracticeTopic) {
       return;
     }
 
-    if (onPracticeTopic) {
-      onPracticeTopic(recommendedTopic);
-    }
+    onPracticeTopic(recommendedTopic);
   };
 
 
